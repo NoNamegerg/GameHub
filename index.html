@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameHub — Ваш игровой помощник</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-theme {
+            background: linear-gradient(135deg, #f4f4f4, #e0e0e0);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Шапка */
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        /* Навигация */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        nav button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        nav button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        nav button.active {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+        }
+
+        /* Контент */
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        body.light-theme .tab-content {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .product {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.light-theme .product {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .product h3 {
+            font-size: 1.2rem;
+            margin: 0 0 10px;
+        }
+
+        .product p {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin: 0 0 15px;
+        }
+
+        .product button {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background 0.3s ease;
+        }
+
+        .product button:hover {
+            background: linear-gradient(135deg, #0072ff, #00c6ff);
+        }
+
+        /* Кейсы */
+        .case {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .case img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .case button {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background 0.3s ease;
+        }
+
+        .case button:hover {
+            background: linear-gradient(135deg, #0072ff, #00c6ff);
+        }
+
+        /* Корзина */
+        .cart {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        body.light-theme .cart {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .cart:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .cart span {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        /* Модальное окно корзины */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .modal-content {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .modal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .modal ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px;
+        }
+
+        .modal ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .modal ul li button {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .modal ul li button:hover {
+            background: #ff1a1a;
+        }
+
+        .modal p {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modal button {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background 0.3s ease;
+        }
+
+        .modal button:hover {
+            background: linear-gradient(135deg, #0072ff, #00c6ff);
+        }
+
+        /* Подвал */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .footer a {
+            color: #00c6ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Шапка -->
+    <header>
+        <h1>GameHub</h1>
+        <p>Ваш помощник в мире игр</p>
+    </header>
+
+    <!-- Навигация -->
+    <nav>
+        <button onclick="openTab('steam')" class="active">Пополнение Steam</button>
+        <button onclick="openTab('games')">Покупка игр</button>
+        <button onclick="openTab('subscriptions')">Покупка подписок</button>
+        <button onclick="openTab('cases')">Кейсы</button>
+        <button onclick="openTab('history')">История заказов</button>
+    </nav>
+
+    <!-- Контент вкладок -->
+    <div id="steam" class="tab-content active">
+        <h2>Пополнение Steam</h2>
+        <div class="products" id="steam-products">
+            <!-- Товары будут добавлены через JavaScript -->
+        </div>
+        <div class="input-group">
+            <input type="number" id="customAmount" placeholder="Введите свою сумму">
+            <button class="button" onclick="handleCustomAmount()">Пополнить</button>
+        </div>
+    </div>
+
+    <div id="games" class="tab-content">
+        <h2>Покупка игр</h2>
+        <div class="products" id="games-products">
+            <!-- Товары будут добавлены через JavaScript -->
+        </div>
+    </div>
+
+    <div id="subscriptions" class="tab-content">
+        <h2>Покупка подписок</h2>
+        <div class="products" id="subscriptions-products">
+            <!-- Товары будут добавлены через JavaScript -->
+        </div>
+    </div>
+
+    <div id="cases" class="tab-content">
+        <h2>Кейсы</h2>
+        <div class="case">
+            <img src="https://via.placeholder.com/150" alt="Кейс">
+            <p>Цена: 100 руб.</p>
+            <button onclick="openCase()">Открыть кейс</button>
+        </div>
+    </div>
+
+    <div id="history" class="tab-content">
+        <h2>История заказов</h2>
+        <ul id="order-history">
+            <!-- История заказов будет добавлена через JavaScript -->
+        </ul>
+    </div>
+
+    <!-- Корзина -->
+    <div class="cart" onclick="openCartModal()">
+        <span>Корзина (<span id="cart-count">0</span>)</span>
+    </div>
+
+    <!-- Подвал -->
+    <div class="footer">
+        <p>Свяжитесь со мной: <a href="https://t.me/ваш_username" target="_blank">Telegram</a></p>
+    </div>
+</div>
+
+<!-- Модальное окно корзины -->
+<div id="cartModal" class="modal">
+    <div class="modal-content">
+        <h2>Корзина</h2>
+        <ul id="cart-items">
+            <!-- Товары в корзине будут добавлены через JavaScript -->
+        </ul>
+        <p>Итого: <span id="cart-total">0</span> руб.</p>
+        <button onclick="checkout()">Оплатить</button>
+    </div>
+</div>
+
+<!-- Модальное окно с призом -->
+<div id="prizeModal" class="modal">
+    <div class="modal-content">
+        <h2>Поздравляем!</h2>
+        <p id="prizeText"></p>
+        <button onclick="closePrizeModal()">Закрыть</button>
+    </div>
+</div>
+
+<script>
+    // Данные для товаров
+    const products = {
+        steam: [
+            { name: "100 рублей", price: 110, paymentLink: "https://paypal.com" },
+            { name: "500 рублей", price: 550, paymentLink: "https://paypal.com" },
+            { name: "1000 рублей", price: 1100, paymentLink: "https://paypal.com" },
+        ],
+        games: [
+            { name: "Cyberpunk 2077", price: 1999, paymentLink: "https://paypal.com" },
+            { name: "The Witcher 3", price: 999, paymentLink: "https://paypal.com" },
+            { name: "Elden Ring", price: 2499, paymentLink: "https://paypal.com" },
+        ],
+        subscriptions: [
+            { name: "Xbox Game Pass", price: 799, paymentLink: "https://paypal.com" },
+            { name: "PlayStation Plus", price: 999, paymentLink: "https://paypal.com" },
+            { name: "Nintendo Switch Online", price: 499, paymentLink: "https://paypal.com" },
+        ],
+    };
+
+    // Призы для кейсов
+    const casePrizes = [
+        { name: "50 рублей на Steam", value: 50 },
+        { name: "100 рублей на Steam", value: 100 },
+        { name: "Игра The Witcher 3", value: "The Witcher 3" },
+        { name: "Игра Cyberpunk 2077", value: "Cyberpunk 2077" },
+        { name: "Скидка 10% на следующий заказ", value: "10% скидка" },
+    ];
+
+    // Корзина и история заказов
+    let cart = [];
+    let orderHistory = [];
+
+    // Функция для отображения товаров
+    function renderProducts(category, containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = products[category]
+            .map(
+                (product) => `
+                <div class="product">
+                    <h3>${product.name}</h3>
+                    <p>Цена: ${product.price} руб.</p>
+                    <button onclick="addToCart('${product.name}', ${product.price}, '${product.paymentLink}')">Добавить в корзину</button>
+                </div>
+            `
+            )
+            .join("");
+    }
+
+    // Функция для добавления товара в корзину
+    function addToCart(name, price, paymentLink) {
+        cart.push({ name, price, paymentLink });
+        updateCart();
+    }
+
+    // Функция для обновления корзины
+    function updateCart() {
+        document.getElementById('cart-count').textContent = cart.length;
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        cartItems.innerHTML = cart
+            .map(
+                (item, index) => `
+                <li>
+                    ${item.name} - ${item.price} руб.
+                    <button onclick="removeFromCart(${index})">Удалить</button>
+                </li>
+            `
+            )
+            .join("");
+        const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+        cartTotal.textContent = totalAmount;
+    }
+
+    // Функция для удаления товара из корзины
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCart();
+    }
+
+    // Функция для открытия модального окна корзины
+    function openCartModal() {
+        const modal = document.getElementById('cartModal');
+        modal.style.display = 'flex';
+    }
+
+    // Функция для оплаты товаров в корзине
+    function checkout() {
+        if (cart.length === 0) {
+            alert('Корзина пуста!');
+            return;
+        }
+        const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+        const paymentLink = `https://paypal.com?amount=${totalAmount}`; // Замените на реальную ссылку
+        orderHistory.push(...cart);
+        cart = [];
+        updateCart();
+        renderOrderHistory();
+        window.location.href = paymentLink;
+    }
+
+    // Функция для отображения истории заказов
+    function renderOrderHistory() {
+        const orderHistoryList = document.getElementById('order-history');
+        orderHistoryList.innerHTML = orderHistory
+            .map(
+                (item) => `
+                <li>${item.name} - ${item.price} руб.</li>
+            `
+            )
+            .join("");
+    }
+
+    // Функция для открытия кейса
+    function openCase() {
+        const randomPrize = casePrizes[Math.floor(Math.random() * casePrizes.length)];
+        const prizeModal = document.getElementById('prizeModal');
+        const prizeText = document.getElementById('prizeText');
+        prizeText.textContent = `Вы выиграли: ${randomPrize.name}`;
+        prizeModal.style.display = 'flex';
+    }
+
+    // Функция для закрытия модального окна с призом
+    function closePrizeModal() {
+        const prizeModal = document.getElementById('prizeModal');
+        prizeModal.style.display = 'none';
+    }
+
+    // Функция для обработки ввода своей суммы
+    function handleCustomAmount() {
+        const customAmount = document.getElementById('customAmount').value;
+        if (customAmount && !isNaN(customAmount)) {
+            const paymentLink = `https://paypal.com?amount=${customAmount}`; // Замените на реальную ссылку
+            window.location.href = paymentLink;
+        } else {
+            alert('Пожалуйста, введите корректную сумму.');
+        }
+    }
+
+    // Функция для переключения вкладок
+    function openTab(tabName) {
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        const buttons = document.querySelectorAll('nav button');
+        buttons.forEach(button => button.classList.remove('active'));
+
+        document.getElementById(tabName).classList.add('active');
+        document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
+
+        // Отображаем товары при переключении вкладок
+        if (tabName === 'steam') renderProducts('steam', 'steam-products');
+        if (tabName === 'games') renderProducts('games', 'games-products');
+        if (tabName === 'subscriptions') renderProducts('subscriptions', 'subscriptions-products');
+        if (tabName === 'history') renderOrderHistory();
+    }
+
+    // Инициализация: отображаем товары на первой вкладке
+    document.addEventListener('DOMContentLoaded', () => {
+        renderProducts('steam', 'steam-products');
+    });
+</script>
+
+</body>
+</html>
