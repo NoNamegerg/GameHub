@@ -236,6 +236,23 @@
         .modal-content button:hover {
             background: #0072ff;
         }
+
+        /* Стили для отзывов */
+        .review {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .review p {
+            margin: 0;
+        }
+
+        .review .username {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -419,13 +436,17 @@
     function submitReview() {
         const reviewInput = document.getElementById('reviewInput');
         const reviewText = reviewInput.value.trim();
-        if (reviewText) {
-            reviews.push(reviewText);
+        if (reviewText && currentUser) {
+            const review = {
+                username: currentUser.username,
+                text: reviewText,
+            };
+            reviews.push(review);
             localStorage.setItem('reviews', JSON.stringify(reviews));
             renderReviews();
             reviewInput.value = '';
         } else {
-            alert('Пожалуйста, напишите отзыв.');
+            alert('Пожалуйста, авторизуйтесь и напишите отзыв.');
         }
     }
 
@@ -443,7 +464,8 @@
             .map(
                 (review) => `
                 <div class="review">
-                    <p>${review}</p>
+                    <div class="username">${review.username}</div>
+                    <p>${review.text}</p>
                 </div>
             `
             )
